@@ -4,7 +4,7 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-anycloud-ble-ess)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0V4eHh4eHgiLCJTcGVjIE51bWJlciI6IkNFeHh4eHh4IiwiRG9jIFRpdGxlIjoiQW55Q2xvdWQ6IEJsdWV0b290aCZyZWc7IExFIEVudmlyb25tZW50YWwgU2Vuc2luZyBTZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiMi4wLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkFueUNsb3VkOiBCbHVldG9vdGgmcmVnOyBMRSBFbnZpcm9ubWVudGFsIFNlbnNpbmcgU2VydmljZSIsInJpZCI6InJhbm0iLCJEb2MgdmVyc2lvbiI6IjMuMC4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJQU09DIn0=)
 
 ## Requirements
 
@@ -28,6 +28,7 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 - [PSoC&trade; 6 Wi-Fi Bluetooth&reg; pioneer kit](https://www.cypress.com/CY8CKIT-062-WiFi-BT) (`C8CKIT-062-WIFI-BT`)
 - [PSoC&trade; 62S1 Wi-Fi Bluetooth&reg; pioneer kit](https://www.cypress.com/CYW9P62S1-43438EVB-01) (`CYW9P62S1-43438EVB-01`)
 - [PSoC 64 "Secure Boot" Wi-Fi Bluetooth pioneer kit](https://www.cypress.com/CY8CKIT-064B0S2-4343W) (`CY8CKIT-064B0S2-4343W`)
+- [PSoC&trade; 62S2 evaluation kit](https://www.cypress.com/CY8CEVAL-062S2) (`CY8CEVAL-062S2`, `CY8CEVAL-062S2-LAI-4373M2`, `CY8CEVAL-062S2-MUR-43439M2`)
 
 ## Hardware setup
 
@@ -286,12 +287,13 @@ For PSoC&trade; 6 MCU devices, see [How to design with PSoC 6 MCU - KBA223067](h
 
 ## Document history
 
-Document title: *CExxxxxx* - *AnyCloud: Bluetooth&reg; LE Environmental Sensing Service*
+Document title: *CE230294* - *AnyCloud: Bluetooth&reg; LE Environmental Sensing Service*
 
 | Version | Description of change |
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
 | 2.0.0   | Code Example updated to support ModusToolbox&trade; software v2.3.1 and it is not backward compatible with v2.3 and below|
+| 3.0.0   | Added support for 43439 kit <br /> Updated BSP to 3.0.0|
 
 ------
 

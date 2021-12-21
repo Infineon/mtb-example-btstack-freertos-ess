@@ -32,7 +32,7 @@
 TARGET=CY8CPROTO-062-4343W
 
 # Name of application (used to derive name of final linked file).
-APPNAME=BLE_EnvironmentalSensingService
+APPNAME=mtb-example-anycloud-ble-ess
 
 # Name of toolchain to use. Options include:
 #
