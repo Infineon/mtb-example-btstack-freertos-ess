@@ -9,7 +9,7 @@
 *
 *
  *********************************************************************************
- Copyright 2020-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ Copyright 2020-2022, Cypress Semiconductor Corporation (an Infineon company) or
  an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 
  This software, including source code, documentation and related
@@ -229,46 +229,19 @@ app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
                                                       p_attr_req->opcode,
                                                      &p_attr_req->data.read_req,
                                                       p_attr_req->len_requested);
-             if ( (p_attr_req->opcode == GATT_REQ_READ) ||
-                  (p_attr_req->opcode == GATT_REQ_READ_BLOB) )
-             {
-                if(gatt_status == WICED_BT_GATT_SUCCESS)
-                {
-                    wiced_bt_gatt_server_send_write_rsp(p_attr_req->conn_id,
-                                                        p_attr_req->opcode,
-                                                        p_attr_req->data.write_req.handle);
-                }
-                else
-                {
-                    wiced_bt_gatt_server_send_error_rsp(p_attr_req->conn_id,
-                                                        p_attr_req->opcode,
-                                                        p_attr_req->data.write_req.handle,
-                                                        gatt_status);
-                }
-             }
              break;
 
         case GATT_REQ_WRITE:
         case GATT_CMD_WRITE:
+        case GATT_CMD_SIGNED_WRITE:
              gatt_status = app_gatt_attr_write_handler(p_attr_req->opcode,
                                                        &p_attr_req->data.write_req,
                                                        p_attr_req->len_requested );
-             if (p_attr_req->opcode == GATT_REQ_WRITE)
+             if ((p_attr_req->opcode == GATT_REQ_WRITE) && (gatt_status == WICED_BT_GATT_SUCCESS))
              {
-                if(gatt_status == WICED_BT_GATT_INVALID_ATTR_LEN)
-                {
-                    wiced_bt_gatt_server_send_error_rsp(p_attr_req->conn_id,
-                                                        p_attr_req->opcode,
-                                                        p_attr_req->data.read_req.handle,
-                                                        WICED_BT_GATT_INVALID_ATTR_LEN);
-                }
-                if(gatt_status == WICED_BT_GATT_INVALID_HANDLE)
-                {
-                    wiced_bt_gatt_server_send_error_rsp(p_attr_req->conn_id,
-                                                        p_attr_req->opcode,
-                                                        p_attr_req->data.read_req.handle,
-                                                        WICED_BT_GATT_INVALID_HANDLE);
-                }
+                 wiced_bt_gatt_write_req_t *p_write_request = &p_attr_req->data.write_req;
+                 wiced_bt_gatt_server_send_write_rsp(p_attr_req->conn_id, p_attr_req->opcode,
+                                                     p_write_request->handle);
              }
              break;
 
@@ -284,6 +257,7 @@ app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
         case GATT_HANDLE_VALUE_NOTIF:
             printf("Notfication send complete\n");
             break;
+
         case GATT_REQ_READ_BY_TYPE:
             gatt_status = app_gatt_read_by_type_handler(p_attr_req->conn_id,
                                                                p_attr_req->opcode,

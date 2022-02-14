@@ -8,7 +8,7 @@
  *
  *
  *********************************************************************************
- Copyright 2020-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ Copyright 2020-2022, Cypress Semiconductor Corporation (an Infineon company) or
  an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 
  This software, including source code, documentation and related
@@ -165,7 +165,6 @@ int main(void)
     cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
     /* Debug logs on UART port */
-    printf("**********AnyCloud Example*****************\n");
 
     printf("****** Environmental Sensing Service ******\n");
 

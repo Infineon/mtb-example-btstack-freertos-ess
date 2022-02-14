@@ -1,16 +1,16 @@
-# AnyCloud: Bluetooth&reg; LE Environmental Sensing Service
+# Bluetooth&reg; LE Environmental Sensing Service
 
-This code example demonstrates the implementation of a simple Bluetooth&reg; LE environmental sensing profile. It shows how to send environmental parameters like temperature by sending simulated temperature values over the Bluetooth&reg; LE connection using the Infineon&reg; AIROC&trade; WiFi & Bluetooth&reg; combo SoCs supported in the AnyCloud SDK. instructions provided in this document are applicable for all supported kits in the ModusToolbox™ software environment.
+This code example demonstrates the implementation of a simple Bluetooth&reg; LE environmental sensing profile. It shows how to send environmental parameters like temperature by sending simulated temperature values over the Bluetooth&reg; LE connection using the Infineon&reg; AIROC&trade; WiFi & Bluetooth&reg; combo SoCs supported in the SDK. instructions provided in this document are applicable for all supported kits in the ModusToolbox™ software environment.
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-anycloud-ble-ess)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkFueUNsb3VkOiBCbHVldG9vdGgmcmVnOyBMRSBFbnZpcm9ubWVudGFsIFNlbnNpbmcgU2VydmljZSIsInJpZCI6InJhbm0iLCJEb2MgdmVyc2lvbiI6IjMuMC4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJQU09DIn0=)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkJsdWV0b290aCZyZWc7IExFIEVudmlyb25tZW50YWwgU2Vuc2luZyBTZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiMy4xLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
 
 ## Requirements
 
-- [ModusToolbox&trade; software](https://www.cypress.com/products/modustoolbox-software-environment) v2.3 with ModusToolbox&trade; software tools patch 2.3.1
+- [ModusToolbox&trade; software](https://www.cypress.com/products/modustoolbox-software-environment) v2.4
 - Programming language: C
-- Board support package (BSP) minimum required version: 2.0.0
+- Board support package (BSP) minimum required version: 3.0.0
 - Associated parts: [PSoC&trade; 6 MCU](http://www.cypress.com/PSoC6) parts with AIROC™ CYW43012Wi-Fi & Bluetooth® combo chip, AIROC™ CYW43012Wi-Fi & Bluetooth® combo chip
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
@@ -94,7 +94,7 @@ Argument | Description | Required/optional
 `--user-app-name`| Specify the name of the application if you prefer to have a name other than the example's default name | Optional
 
 
-The following example will clone the "[AnyCloud Bluetooth&reg; LE Environmental Sensing Service](https://github.com/Infineon/mtb-example-anycloud-ble-ess)" application with the desired name "mtb-example-anycloud-ble-ess" configured for the *CY8CPROTO-062-4343W* BSP into the specified working directory, *C:/mtb_projects*:
+The following example will clone the "[Bluetooth&reg; LE Environmental Sensing Service](https://github.com/Infineon/mtb-example-anycloud-ble-ess)" application with the desired name "mtb-example-anycloud-ble-ess" configured for the *CY8CPROTO-062-4343W* BSP into the specified working directory, *C:/mtb_projects*:
 
    ```
    project-creator-cli --board-id CY8CPROTO-062-4343W --app-id mtb-example-anycloud-ble-ess --user-app-name mtb-example-anycloud-ble-ess --target-dir "C:/mtb_projects"
@@ -163,7 +163,7 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
    After programming, the application starts automatically. Observe the messages on the UART terminal, and wait for the device to make all the required connections.
 
-6.    To test using the CySmart mobile app, do the following (see equivalent CySmart app screenshots in Figure 1):
+6. To test using the CySmart mobile app, do the following (see equivalent CySmart app screenshots in Figure 1):
 
     1. Turn ON Bluetooth&reg; on your Android or iOS device.
 
@@ -186,7 +186,7 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
     ![](images/fig1.cysmart.png)
 
-8.    Use the KitProg3 COM port to view the Bluetooth&reg; stack and application trace messages in the terminal window.
+8.  Use the KitProg3 COM port to view the Bluetooth&reg; stack and application trace messages in the terminal window.
 
     **Figure 2. Log messages on KitProg3 COM port**
 
@@ -287,13 +287,14 @@ For PSoC&trade; 6 MCU devices, see [How to design with PSoC 6 MCU - KBA223067](h
 
 ## Document history
 
-Document title: *CE230294* - *AnyCloud: Bluetooth&reg; LE Environmental Sensing Service*
+Document title: *CE230294* - *Bluetooth&reg; LE Environmental Sensing Service*
 
 | Version | Description of change |
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
 | 2.0.0   | Code Example updated to support ModusToolbox&trade; software v2.3.1 and it is not backward compatible with v2.3 and below|
 | 3.0.0   | Added support for 43439 kit <br /> Updated BSP to 3.0.0|
+| 3.1.0   | Code example updated|
 
 ------
 
