@@ -65,7 +65,7 @@
 #include "wiced_bt_stack.h"
 #include "cycfg_bt_settings.h"
 #include "cycfg_gap.h"
-
+#include "cybsp_bt_config.h"
 /*******************************************************************************
  *        Macro Definitions
  *******************************************************************************/
@@ -73,8 +73,8 @@
 /* This is the temperature measurement interval which is same as configured in
  * the BT Configurator - The variable represents interval in milliseconds.
  */
-#define POLL_TIMER_IN_MSEC              (5000u)
-
+#define POLL_TIMER_IN_MSEC              (49999u)
+#define POLL_TIMER_FREQ                 (10000)
 /* Temperature Simulation Constants */
 #define DEFAULT_TEMPERATURE             (2500u)
 #define MAX_TEMPERATURE_LIMIT           (3000u)
@@ -105,8 +105,9 @@ volatile int uxTopUsedPriority;
 /* Manages runtime configuration of Bluetooth stack */
 extern const wiced_bt_cfg_settings_t wiced_bt_cfg_settings;
 
-/* Timer to handle streaming start and stop */
-static TimerHandle_t seconds_timer_h;
+/* FreeRTOS variable to store handle of task created to update and send dummy
+   values of temperature */
+TaskHandle_t ess_task_handle;
 
 /* Status variable for connection ID */
 uint16_t app_bt_conn_id;
@@ -115,6 +116,18 @@ uint16_t app_bt_conn_id;
 int16_t temperature = DEFAULT_TEMPERATURE;
 uint8_t alternating_flag = 0;
 
+/* Variable for 5 sec timer object */
+static cyhal_timer_t ess_timer_obj;
+/* Configure timer for 5 sec */
+const cyhal_timer_cfg_t ess_timer_cfg =
+    {
+        .compare_value = 0,                    /* Timer compare value, not used */
+        .period = POLL_TIMER_IN_MSEC, /* Defines the timer period */
+        .direction = CYHAL_TIMER_DIR_UP,       /* Timer counts up */
+        .is_compare = false,                   /* Don't use compare mode */
+        .is_continuous = true,                 /* Run timer indefinitely */
+        .value = 0                             /* Initial value of counter */
+};
 /*******************************************************************************
  *        Function Prototypes
  *******************************************************************************/
@@ -130,8 +143,10 @@ static wiced_result_t app_bt_set_advertisement_data(void);
 /* This function initializes the required BLE ESS & thermistor */
 static void bt_app_init(void);
 
-/* This is a timer invoked callback function that is invoked in every timeout */
-static void seconds_timer_temperature_cb(TimerHandle_t cb_params);
+/* Task to send notifications with dummy temperature values */
+void ess_task(void *pvParam);
+/* HAL timer callback registered when timer reaches terminal count */
+void ess_timer_callb(void *callback_arg, cyhal_timer_event_t event);
 
 /* This function starts the advertisements */
 static void app_start_advertisement(void);
@@ -149,6 +164,7 @@ int main(void)
 {
     uxTopUsedPriority = configMAX_PRIORITIES - 1;
     wiced_result_t wiced_result;
+    BaseType_t rtos_result;
 
     /* Initialize and Verify the BSP initialization */
     CY_ASSERT(CY_RSLT_SUCCESS == cybsp_init());
@@ -177,6 +193,17 @@ int main(void)
         printf("Bluetooth Stack Initialization Successful \n");
     } else {
         printf("Bluetooth Stack Initialization failed!!\n");
+    }
+
+    rtos_result = xTaskCreate(ess_task, "ESS Task", (configMINIMAL_STACK_SIZE * 4),
+                                        NULL, (configMAX_PRIORITIES - 3), &ess_task_handle);
+    if(pdPASS == rtos_result)
+    {
+        printf("ESS task created successfully\n");
+    }
+    else
+    {
+        printf("ESS task creation failed\n");
     }
 
     /* Start the FreeRTOS scheduler */
@@ -276,6 +303,7 @@ app_bt_management_callback(wiced_bt_management_evt_t event,
 static void bt_app_init(void)
 {
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_ERROR;
+    cy_rslt_t rslt;
 
     /* Register with stack to receive GATT callback */
     gatt_status = wiced_bt_gatt_register(app_bt_gatt_event_callback);
@@ -287,21 +315,27 @@ static void bt_app_init(void)
                     CYHAL_GPIO_DRIVE_STRONG,
                     CYBSP_LED_STATE_OFF);
 
-    seconds_timer_h = xTimerCreate("Seconds Timer",
-                                    POLL_TIMER_IN_MSEC,
-                                    pdTRUE,
-                                    NULL,
-                                    seconds_timer_temperature_cb);
-
-    /* Timer init failed. Stop program execution */
-    if (NULL == seconds_timer_h) {
-        printf("Temperature sensing timer Initialization has failed! \n");
-        CY_ASSERT(0);
+    /* Initialize the HAL timer used to count 5 seconds */
+    rslt = cyhal_timer_init(&ess_timer_obj, NC, NULL);
+    if (CY_RSLT_SUCCESS != rslt)
+    {
+        printf("ESS timer init failed !\n");
     }
+    /* Configure the timer for 5 seconds */
+    cyhal_timer_configure(&ess_timer_obj, &ess_timer_cfg);
+    rslt = cyhal_timer_set_frequency(&ess_timer_obj, POLL_TIMER_FREQ);
+    if (CY_RSLT_SUCCESS != rslt)
+    {
+        printf("ESS timer set freq failed !\n");
+    }
+    /* Register for a callback whenever timer reaches terminal count */
+    cyhal_timer_register_callback(&ess_timer_obj, ess_timer_callb, NULL);
+    cyhal_timer_enable_event(&ess_timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
 
-    if (pdPASS != xTimerStart(seconds_timer_h, 20u)) {
-        printf("Failed to start audio timer!\n");
-        CY_ASSERT(0);
+    /* Start the timer */
+    if (CY_RSLT_SUCCESS != cyhal_timer_start(&ess_timer_obj))
+    {
+        printf("ESS timer start failed !");
     }
 
     /* Initialize GATT Database */
@@ -367,75 +401,102 @@ static wiced_result_t app_bt_set_advertisement_data(void)
 
 /*
  Function name:
- seconds_timer_temperature_cb
+ ess_timer_callb
 
  Function Description:
- @brief  This callback function is invoked on timeout of seconds timer.
+ @brief  This callback function is invoked on timeout of 5 seconds timer.
 
- @param  arg
+ @param  void*: unused
+ @param cyhal_timer_event_t: unused
 
  @return void
  */
-static void seconds_timer_temperature_cb(TimerHandle_t cb_params)
+void ess_timer_callb(void *callback_arg, cyhal_timer_event_t event)
 {
+    BaseType_t xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(ess_task_handle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
 
-    /* Varying temperature by 1 degree on every timeout for simulation */
-    if (0 == alternating_flag) {
-        temperature += DELTA_TEMPERATURE;
-        if (MAX_TEMPERATURE_LIMIT <= temperature) {
-            alternating_flag = 1;
-        }
-    } else if ((1 == alternating_flag)) {
-        temperature -= DELTA_TEMPERATURE;
-        if (MIN_TEMPERATURE_LIMIT >= temperature) {
-            alternating_flag = 0;
-        }
-    }
+/*
+ Function name:
+ ess_task
 
-    printf("\nTemperature (in degree Celsius) \t\t%d.%02d\n",
-            (temperature / 100), ABS(temperature % 100));
+ Function Description:
+ @brief  This task updates dummy temperature value every time it is notified
+         and sends a notification to the connected peer
 
-    /*
-     * app_ess_temperature value is set both for read operation and
-     * notify operation.
-     */
-    app_ess_temperature[0] = (uint8_t)(temperature & 0xff);
-    app_ess_temperature[1] = (uint8_t)((temperature >> 8) & 0xff);
+ @param  void*: unused
 
-    /* To check that connection is up and
-     * client is registered to receive notifications
-     * to send temperature data in Little Endian Format
-     * as per BT SIG's ESS Specification
-     */
-
-    if (IS_NOTIFIABLE (app_bt_conn_id, app_ess_temperature_client_char_config[0]) == 0)
+ @return void
+ */
+void ess_task(void *pvParam)
+{
+    while(true)
     {
-        if(!app_bt_conn_id)
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        /* Varying temperature by 1 degree on every timeout for simulation */
+        if (0 == alternating_flag)
         {
-            printf("This device is not connected to a central device\n");
-        }else{
-            printf("This device is connected to a central device but\n"
-                    "GATT client notifications are not enabled\n");
+            temperature += DELTA_TEMPERATURE;
+            if (MAX_TEMPERATURE_LIMIT <= temperature)
+            {
+                alternating_flag = 1;
+            }
+        }
+        else if ((1 == alternating_flag))
+        {
+            temperature -= DELTA_TEMPERATURE;
+            if (MIN_TEMPERATURE_LIMIT >= temperature)
+            {
+                alternating_flag = 0;
+            }
         }
 
-        return;
-    }
-
-    {
-        wiced_bt_gatt_status_t gatt_status;
+        printf("\nTemperature (in degree Celsius) \t\t%d.%02d\n",
+                (temperature / 100), ABS(temperature % 100));
 
         /*
-        * Sending notification, set the pv_app_context to NULL, since the
-        * data 'app_ess_temperature' is not to be freed
+        * app_ess_temperature value is set both for read operation and
+        * notify operation.
         */
-        gatt_status = wiced_bt_gatt_server_send_notification(app_bt_conn_id,
-                                                             HDLC_ESS_TEMPERATURE_VALUE,
-                                                             app_ess_temperature_len,
-                                                             app_ess_temperature,
-                                                             NULL);
+        app_ess_temperature[0] = (uint8_t)(temperature & 0xff);
+        app_ess_temperature[1] = (uint8_t)((temperature >> 8) & 0xff);
 
-        printf("Sent notification status 0x%x\n", gatt_status);
+        /* To check that connection is up and
+        * client is registered to receive notifications
+        * to send temperature data in Little Endian Format
+        * as per BT SIG's ESS Specification
+        */
 
+        if (IS_NOTIFIABLE (app_bt_conn_id, app_ess_temperature_client_char_config[0]) == 0)
+        {
+            if(!app_bt_conn_id)
+            {
+                printf("This device is not connected to a central device\n");
+            }else{
+                printf("This device is connected to a central device but\n"
+                        "GATT client notifications are not enabled\n");
+            }
+        }
+        else
+        {
+            wiced_bt_gatt_status_t gatt_status;
+
+            /*
+            * Sending notification, set the pv_app_context to NULL, since the
+            * data 'app_ess_temperature' is not to be freed
+            */
+            gatt_status = wiced_bt_gatt_server_send_notification(app_bt_conn_id,
+                                                                    HDLC_ESS_TEMPERATURE_VALUE,
+                                                                    app_ess_temperature_len,
+                                                                    app_ess_temperature,
+                                                                    NULL);
+
+            printf("Sent notification status 0x%x\n", gatt_status);
+
+        }
     }
 }
 
