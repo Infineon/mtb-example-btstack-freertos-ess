@@ -4,7 +4,7 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-ess)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkJsdWV0b290aCZyZWc7IExFIGVudmlyb25tZW50YWwgc2Vuc2luZyBzZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiNC4yLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkJsdWV0b290aCZyZWc7IExFIGVudmlyb25tZW50YWwgc2Vuc2luZyBzZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiNC4zLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
 
 ## Requirements
 
@@ -12,7 +12,7 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 - Programming language: C
 - Board support package (BSP) minimum required version for:
    - PSoC&trade; 6 MCU: v4.0.0
-   - CYW920829M2EVB-01: v1.0.0.Beta1
+   - CYW920829M2EVK-02: v1.0.0.Beta4
 - Associated parts: [PSoC&trade; 6 MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu) parts with AIROC&trade; CYW43012 Wi-Fi & Bluetooth&reg; combo chip, AIROC&trade; CYW43012 Wi-Fi & Bluetooth&reg; combo chip, and [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829)
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
@@ -31,7 +31,7 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 - [PSoC&trade; 62S1 Wi-Fi Bluetooth&reg; pioneer kit](https://www.infineon.com/CYW9P62S1-43438EVB-01) (`CYW9P62S1-43438EVB-01`)
 - [PSoC&trade; 64 "Secure Boot" Wi-Fi Bluetooth&reg; pioneer kit](https://www.infineon.com/CY8CKIT-064B0S2-4343W) (`CY8CKIT-064B0S2-4343W`)
 - [PSoC&trade; 62S2 evaluation kit](https://www.infineon.com/CY8CEVAL-062S2) (`CY8CEVAL-062S2`, `CY8CEVAL-062S2-LAI-4373M2`, `CY8CEVAL-062S2-LAI-43439M2`)
-- AIROC&trade; CYW20829 Bluetooth&reg; LE evaluation kit (`CYW920829M2EVB-01`)
+- AIROC&trade; CYW20829 Bluetooth&reg; LE evaluation kit (`CYW920829M2EVK-02`)
 - [PSoC&trade; 6 Bluetooth&reg; LE pioneer kit](https://www.infineon.com/CY8CKIT-062-BLE) (`CY8CKIT-062-BLE`)
 - [PSoC&trade; 6 Bluetooth&reg; LE prototyping kit](https://www.infineon.com/CY8CPROTO-063-BLE) (`CY8CPROTO-063-BLE`)
 - [EZ-BLE Arduino Evaluation Board](https://www.infineon.com/cms/en/product/evaluation-boards/cyble-416045-eval/) (`CYBLE-416045-EVAL`)
@@ -43,17 +43,17 @@ This example uses the board's default configuration. See the kit user guide to e
 
 **Note:** The PSoC&trade; 6 Bluetooth&reg; LE pioneer kit (CY8CKIT-062-BLE) and the PSoC&trade; 6 Wi-Fi Bluetooth&reg; pioneer kit (CY8CKIT-062-WIFI-BT) ship with KitProg2 installed. The ModusToolbox&trade; software requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/Infineon/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
-The AIROC&trade; CYW20829 Bluetooth&reg; kit (CYW920829M2EVB-01) ships with KitProg3 version 2.30 installed. The ModusToolbox&trade; software requires KitProg3 with latest version 2.40. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the Firmware Loader GitHub repository. If you do not upgrade, you will see an error such as "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
+The AIROC&trade; CYW20829 Bluetooth&reg; kit (CYW920829M2EVK-02) ships with KitProg3 version 2.21 installed. The ModusToolbox&trade; software requires KitProg3 with latest version 2.40. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the Firmware Loader GitHub repository. If you do not upgrade, you will see an error such as "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
 ## Software setup
 
 This code example consists of two parts: a GAP Peripheral and a GAP Central.
 
-For the Central, download and install the LightBlue&reg; app for [iOS](https://apps.apple.com/us/app/lightblue/id557428110) or [Android](https://play.google.com/store/apps/details?id=com.punchthrough.lightblueexplorer&gl=US).
+For the Central, download and install the AIROC&trade; Bluetooth&reg; Connect App for [iOS](https://apps.apple.com/in/app/airoc-bluetooth-connect-app/id6443702288) or [Android](https://play.google.com/store/apps/details?id=com.infineon.airocbluetoothconnect).
 
 
 
-Scan the following QR codes from your mobile phone to download the LightBlue&reg; app.
+Scan the following QR codes from your mobile phone to download the AIROC&trade; Bluetooth&reg; Connect App.
 
 ![](./images/qr.png)
 
@@ -197,21 +197,21 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
 4. After programming, the application starts automatically. Confirm that "\<CE Title>" is displayed on the UART terminal.
 
-5. To test using the LightBlue&reg; mobile app, do the following (see equivalent LightBlue&reg; app screenshots in Figure 1):
+5. To test using the AIROC&trade; Bluetooth&reg; Connect App, do the following (see equivalent AIROC&trade; Bluetooth&reg; Connect App screenshots in Figure 1):
 
     1. Turn ON Bluetooth&reg; on your Android or iOS device.
 
-    2. Launch the LightBlue&reg; app.
+    2. Launch the AIROC&trade; Bluetooth&reg; Connect App.
 
     3. Press the reset switch on the supported kit to start sending advertisements.
 
-    4. Swipe down on the LightBlue&reg; app home screen to start scanning for Bluetooth&reg; LE Peripherals; your device ("Thermistor") appears in the LightBlue&reg; app home screen. Select your device to establish a Bluetooth&reg; LE connection. Once the connection is established, LED1 changes from OFF state to always ON state.
+    4. Swipe down on the AIROC&trade; Bluetooth&reg; Connect App home screen to start scanning for Bluetooth&reg; LE Peripherals; your device ("Thermistor") appears in the AIROC&trade; Bluetooth&reg; Connect App home screen. Select your device to establish a Bluetooth&reg; LE connection. Once the connection is established, LED1 changes from OFF state to always ON state.
 
     5. Select **Environmental Sensing Service** and tap **SUBSCRIBE**.
 
          The temperature values will be updated every 5 seconds in representations such as HEX.
 
-    **Figure 1. Testing with the LightBlue&reg; app on android**
+    **Figure 1. Testing with the AIROC&trade; Bluetooth&reg; Connect App on android**
 
     ![](images/fig_1.png)
 
@@ -319,7 +319,7 @@ Document title: *CE230294* – *Bluetooth&reg; LE environmental sensing service*
  4.0.0   | Updated to support ModusToolbox&trade; software v3.0 and BSPs v4.X
  4.1.0   | Added support for CYW920829M2EVB-01, CY8CKIT-062-BLE, CY8CPROTO-063-BLE, and CYBLE-416045-EVAL
  4.2.0   | Added support for CY8CEVAL-062S2-LAI-43439M2 and CY8CPROTO-062S2-43439
-
+ 4.3.0   | Removed CYW920829M2EVB-01 from supported kits <br> Added support for CYW920829M2EVK-02
 
 ---------------------------------------------------------
 
