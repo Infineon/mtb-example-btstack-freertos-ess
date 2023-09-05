@@ -69,10 +69,11 @@ static void app_free_buffer(uint8_t *p_event_data);
 typedef void (*pfn_free_buffer_t)(uint8_t *);
 
 wiced_bt_gatt_status_t
-app_gatt_read_by_type_handler(  uint16_t conn_id,
+app_gatt_read_by_type_handler(uint16_t conn_id,
                                 wiced_bt_gatt_opcode_t opcode,
                                 wiced_bt_gatt_read_by_type_t *p_read_req,
-                                uint16_t len_requested );
+                                uint16_t len_requested,
+                                uint16_t *p_error_handle);
 
 /* *****************************************************************************
  *                              FUNCTION DEFINITIONS
@@ -97,6 +98,8 @@ app_bt_gatt_event_callback(wiced_bt_gatt_evt_t event,
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_ERROR;
     wiced_bt_gatt_attribute_request_t *p_attr_req = NULL;
 
+    uint16_t error_handle = 0;
+
     switch (event)
     {
 
@@ -106,7 +109,17 @@ app_bt_gatt_event_callback(wiced_bt_gatt_evt_t event,
 
     case GATT_ATTRIBUTE_REQUEST_EVT:
         p_attr_req = &p_event_data->attribute_request;
-        gatt_status = app_gatts_attr_req_handler(p_attr_req);
+        gatt_status = app_gatts_attr_req_handler(p_attr_req,
+                                                 &error_handle);
+
+        if(gatt_status != WICED_BT_GATT_SUCCESS)
+        {
+           wiced_bt_gatt_server_send_error_rsp(p_attr_req->conn_id,
+                                               p_attr_req->opcode,
+                                               error_handle,
+                                               gatt_status);
+        }
+
         break;
 
     case GATT_GET_RESPONSE_BUFFER_EVT:
@@ -215,7 +228,8 @@ app_gatt_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status)
  @return wiced_bt_gatt_status_t  Bluetooth LE GATT gatt_status
  */
 wiced_bt_gatt_status_t
-app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
+app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req, 
+                           uint16_t *p_error_handle)
 {
 
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_ERROR;
@@ -228,7 +242,8 @@ app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
              gatt_status = app_gatt_attr_read_handler(p_attr_req->conn_id,
                                                       p_attr_req->opcode,
                                                      &p_attr_req->data.read_req,
-                                                      p_attr_req->len_requested);
+                                                      p_attr_req->len_requested,
+                                                      p_error_handle);
              break;
 
         case GATT_REQ_WRITE:
@@ -236,7 +251,8 @@ app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
         case GATT_CMD_SIGNED_WRITE:
              gatt_status = app_gatt_attr_write_handler(p_attr_req->opcode,
                                                        &p_attr_req->data.write_req,
-                                                       p_attr_req->len_requested );
+                                                       p_attr_req->len_requested,
+                                                       p_error_handle);
              if ((p_attr_req->opcode == GATT_REQ_WRITE) && (gatt_status == WICED_BT_GATT_SUCCESS))
              {
                  wiced_bt_gatt_write_req_t *p_write_request = &p_attr_req->data.write_req;
@@ -262,7 +278,8 @@ app_gatts_attr_req_handler(wiced_bt_gatt_attribute_request_t *p_attr_req)
             gatt_status = app_gatt_read_by_type_handler(p_attr_req->conn_id,
                                                                p_attr_req->opcode,
                                                                &p_attr_req->data.read_by_type,
-                                                               p_attr_req->len_requested);
+                                                               p_attr_req->len_requested,
+                                                               p_error_handle);
             break;
 
         default:
@@ -294,11 +311,13 @@ wiced_bt_gatt_status_t
 app_gatt_attr_read_handler( uint16_t conn_id,
                             wiced_bt_gatt_opcode_t opcode,
                             wiced_bt_gatt_read_t *p_read_req,
-                            uint16_t len_req)
+                            uint16_t len_req,
+                            uint16_t *p_error_handle)
 {
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_INVALID_HANDLE;
     int32_t index = 0;
     uint16_t len_to_send = 0;
+    *p_error_handle = p_read_req->handle;
 
     /* Validate the length of the attribute and read from the attribute */
     index = app_get_attr_index_by_handle((p_read_req->handle));
@@ -352,10 +371,12 @@ app_gatt_attr_read_handler( uint16_t conn_id,
 wiced_bt_gatt_status_t
 app_gatt_attr_write_handler(wiced_bt_gatt_opcode_t opcode,
                             wiced_bt_gatt_write_req_t *p_write_req,
-                            uint16_t len_req)
+                            uint16_t len_req,
+                            uint16_t *p_error_handle)
 {
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_INVALID_HANDLE;
     int index = 0;
+    *p_error_handle = p_write_req->handle;
 
     /* Binary search of handles is done; Make sure the handles are sorted */
     index = app_get_attr_index_by_handle(p_write_req->handle);
@@ -392,10 +413,11 @@ app_gatt_attr_write_handler(wiced_bt_gatt_opcode_t opcode,
  * @return wiced_bt_gatt_status_t  BLE GATT status
  */
 wiced_bt_gatt_status_t
-app_gatt_read_by_type_handler(  uint16_t conn_id,
+app_gatt_read_by_type_handler(uint16_t conn_id,
                                 wiced_bt_gatt_opcode_t opcode,
                                 wiced_bt_gatt_read_by_type_t *p_read_req,
-                                uint16_t len_requested )
+                                uint16_t len_requested,
+                                uint16_t *p_error_handle)
 {
     uint16_t    attr_handle = p_read_req->s_handle;
     uint8_t     *p_rsp = app_alloc_buffer(len_requested);
@@ -408,10 +430,6 @@ app_gatt_read_by_type_handler(  uint16_t conn_id,
     if (p_rsp == NULL)
     {
         printf("OOM, len_requested: %d !! \r\n",len_requested);
-        wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                            opcode,
-                                            attr_handle,
-                                            WICED_BT_GATT_INSUF_RESOURCE);
         return WICED_BT_GATT_INSUF_RESOURCE;
     }
 
@@ -419,6 +437,7 @@ app_gatt_read_by_type_handler(  uint16_t conn_id,
      * between the start and end handles */
     while (TRUE)
     {
+        *p_error_handle = attr_handle;
         attr_handle = wiced_bt_gatt_find_handle_by_type(attr_handle,
                                                         p_read_req->e_handle,
                                                         &p_read_req->uuid);
@@ -445,10 +464,6 @@ app_gatt_read_by_type_handler(  uint16_t conn_id,
         }
         else
         {
-            wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                                opcode,
-                                                p_read_req->s_handle,
-                                                WICED_BT_GATT_ERR_UNLIKELY);
             app_free_buffer(p_rsp);
             return WICED_BT_GATT_ERR_UNLIKELY;
         }
@@ -460,10 +475,6 @@ app_gatt_read_by_type_handler(  uint16_t conn_id,
     {
        printf("attr not found  start_handle: 0x%04x  end_handle: 0x%04x  Type: 0x%04x\r\n",
                p_read_req->s_handle, p_read_req->e_handle, p_read_req->uuid.uu.uuid16);
-        wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                            opcode,
-                                            p_read_req->s_handle,
-                                            WICED_BT_GATT_INVALID_HANDLE);
         app_free_buffer(p_rsp);
         return WICED_BT_GATT_INVALID_HANDLE;
     }

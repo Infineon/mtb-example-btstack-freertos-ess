@@ -108,7 +108,7 @@ const char *get_btm_event_name(wiced_bt_management_evt_t event)
 #endif
     }
 
-    return (NULL);
+    return "UNKNOWN_EVENT";
 }
 
 /*
@@ -142,7 +142,7 @@ const char *get_btm_advert_mode_name(wiced_bt_ble_advert_mode_t mode)
 
     }
 
-    return (NULL);
+    return "UNKNOWN_MODE";
 }
 
 
@@ -176,7 +176,7 @@ const char *get_gatt_disconn_reason_name(wiced_bt_gatt_disconn_reason_t reason)
 
     }
 
-    return (NULL);
+    return "UNKNOWN_REASON";
 }
 
 
@@ -240,7 +240,7 @@ const char *get_gatt_status_name(wiced_bt_gatt_status_t status)
 
     }
 
-    return (NULL);
+    return "UNKNOWN_STATUS";
 }
 
 /*
