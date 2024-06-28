@@ -4,16 +4,17 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-ess)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkJsdWV0b290aCZyZWc7IExFIGVudmlyb25tZW50YWwgc2Vuc2luZyBzZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiNC42LjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzAyOTQiLCJTcGVjIE51bWJlciI6IjAwMi0zMDI5NCIsIkRvYyBUaXRsZSI6IkJsdWV0b290aCZyZWc7IExFIGVudmlyb25tZW50YWwgc2Vuc2luZyBzZXJ2aWNlIiwicmlkIjoicmFubSIsIkRvYyB2ZXJzaW9uIjoiNS4wLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
 
 ## Requirements
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.1 or later (tested with v3.1)
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.2 or later (tested with v3.2)
 - Programming language: C
 - Board support package (BSP) minimum required version for:
    - PSoC&trade; 6 MCU: v4.0.0
-   - CYW920829M2EVK-02: v1.0.2
-   - CYW989829M2EVB-01: v1.0.1
+   - CYW920829M2EVK-02: v2.0.0
+   - CYW989829M2EVB-01: v2.0.0
+   - CYW989829M2EVB-03: v2.0.0
 - Associated parts: [PSoC&trade; 6 MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu) parts with AIROC&trade; CYW43012 Wi-Fi & Bluetooth&reg; combo chip, AIROC&trade; CYW43012 Wi-Fi & Bluetooth&reg; combo chip, and [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829)
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
@@ -24,9 +25,9 @@ This code example demonstrates the implementation of a simple Bluetooth&reg; LE 
 
 ## Supported kits (make variable 'TARGET')
 
-- [PSoC&trade; 6 Wi-Fi Bluetooth&reg; Prototyping Kit](https://www.infineon.com/CY8CPROTO-062-4343W) (`CY8CPROTO-062-4343W`) – Default value of `TARGET`
-- [AIROC&trade; CYW20829 Bluetooth&reg; LE Evaluation Kit](https://www.infineon.com/CYW920829M2EVK-02) (`CYW920829M2EVK-02`)
-- AIROC&trade; CYW89829 Bluetooth&reg; LE Evaluation Kit (`CYW989829M2EVB-01`)
+- [AIROC&trade; CYW20829 Bluetooth&reg; LE Evaluation Kit](https://www.infineon.com/CYW920829M2EVK-02) (`CYW920829M2EVK-02`) – Default value of `TARGET`
+- AIROC&trade; CYW89829 Bluetooth&reg; LE Evaluation Kit(`CYW989829M2EVB-01`,`CYW989829M2EVB-03`)
+- [PSoC&trade; 6 Wi-Fi Bluetooth&reg; Prototyping Kit](https://www.infineon.com/CY8CPROTO-062-4343W) (`CY8CPROTO-062-4343W`)
 - [PSoC&trade; 62S3 Wi-Fi Bluetooth&reg; Prototyping Kit](https://www.infineon.com/CY8CPROTO-062S3-4343W) (`CY8CPROTO-062S3-4343W`)
 - [PSoC&trade; 62S2 Wi-Fi Bluetooth&reg; Pioneer Kit](https://www.infineon.com/CY8CKIT-062S2-43012) (`CY8CKIT-062S2-43012`)
 - [PSoC&trade; 62S1 Wi-Fi Bluetooth&reg; Pioneer Kit](https://www.infineon.com/CYW9P62S1-43012EVB-01) (`CYW9P62S1-43012EVB-01`)
@@ -360,7 +361,7 @@ Document title: *CE230294* – *Bluetooth&reg; LE environmental sensing service*
  4.5.0   | Code example updated
  4.5.1   | Added support for CYW989829M2EVB-01
  4.6.0   | Added support for CY8CEVAL-062S2-CYW43022CUB and CY8CKIT-062S2-AI
- 
+ 5.0.0   | BSP and BTStack-integration major update for BT Firmware as a separate asset and removal of combo devices as doesn't support fw as separate asset
 
 
 ---------------------------------------------------------
